@@ -1,0 +1,8 @@
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-layer.schema.json
+
+parent = "nexigon-os-efi"
+
+recipes = [
+    # Enable SSH only for VM validation and debugging.
+    "core/ssh",
+]

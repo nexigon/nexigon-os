@@ -1,0 +1,12 @@
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-layer.schema.json
+
+parent = "nexigon-os-rpi"
+
+recipes = [
+    # Include the firmware update for Raspberry Pi 4.
+    "core/rpi-include-firmware",
+]
+
+[parameters."core/rpi-include-firmware"]
+model = "pi4"
+

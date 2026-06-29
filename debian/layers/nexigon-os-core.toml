@@ -1,0 +1,41 @@
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-layer.schema.json
+
+parent = "core/debian-bookworm"
+
+recipes = [
+    # Refresh package indexes before recipes install Debian packages.
+    "core/pkg-update",
+    # Provide baseline hostname and hosts files before the dynamic hostname runs.
+    "core/set-hostname",
+    # Setup Ethernet networking.
+    "rugix-extra/debian-setup-network",
+    # Setup time synchronization.
+    "rugix-extra/debian-setup-timesyncd",
+    # Set a per-device mDNS-friendly hostname at boot.
+    "nexigon-hostname",
+    # Install Nexigon Agent.
+    "nexigon/nexigon-agent",
+    # Configure Nexigon Agent for pairing-key provisioning.
+    "nexigon/nexigon-agent-config",
+    # Power management commands.
+    "nexigon/nexigon-power",
+    # Systemd service management commands.
+    "nexigon/nexigon-systemd",
+]
+
+[parameters."core/set-hostname"]
+hostname = "nexigon-os"
+
+[parameters."nexigon/nexigon-agent"]
+version = "e6ab0e7"
+
+[parameters."nexigon/nexigon-agent-config"]
+provisioning = "true"
+extra_config = """
+[commands]
+enabled = true
+
+[terminal]
+enabled = true
+user = "root"
+"""

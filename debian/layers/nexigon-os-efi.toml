@@ -1,0 +1,9 @@
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-layer.schema.json
+
+parent = "nexigon-os-core"
+
+recipes = [
+    # Setup Debian for booting via GRUB on EFI systems.
+    "core/debian-grub-setup",
+]
+

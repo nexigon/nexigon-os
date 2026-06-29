@@ -1,0 +1,11 @@
+[Unit]
+Description=Configure Nexigon OS hostname
+After=systemd-machine-id-commit.service
+Before=systemd-networkd.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/nexigon/nexigon-configure-hostname
+
+[Install]
+WantedBy=multi-user.target

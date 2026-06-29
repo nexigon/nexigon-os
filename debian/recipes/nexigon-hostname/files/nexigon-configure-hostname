@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+suffix=""
+
+if [ -r /sys/firmware/devicetree/base/serial-number ]; then
+    suffix=$(tr -d '\0' </sys/firmware/devicetree/base/serial-number | tr -cd '[:alnum:]' | tail -c 8)
+fi
+
+if [ -z "$suffix" ] && [ -s /etc/machine-id ]; then
+    suffix=$(tr -cd '[:alnum:]' </etc/machine-id | cut -c 1-8)
+fi
+
+if [ -z "$suffix" ]; then
+    suffix=$(tr -d '-' </proc/sys/kernel/random/uuid | cut -c 1-8)
+fi
+
+hostname="nexigon-${suffix}"
+
+printf '%s\n' "$hostname" >/etc/hostname
+
+if ! command -v hostnamectl >/dev/null 2>&1 || ! hostnamectl set-hostname "$hostname"; then
+    hostname "$hostname"
+fi

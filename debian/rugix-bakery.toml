@@ -1,0 +1,39 @@
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-project.schema.json
+
+[repositories]
+nexigon = { git = "https://github.com/nexigon/nexigon-rugix.git", branch = "main" }
+rugix-extra = { git = "https://github.com/rugix/rugix-extra.git", branch = "v0.8" }
+
+[systems.nexigon-os-efi-amd64]
+layer = "nexigon-os-efi"
+architecture = "amd64"
+target = "generic-grub-efi"
+
+[systems.nexigon-os-efi-arm64]
+layer = "nexigon-os-efi"
+architecture = "arm64"
+target = "generic-grub-efi"
+
+[systems.nexigon-os-efi-amd64-vm]
+layer = "nexigon-os-efi-vm"
+architecture = "amd64"
+target = "generic-grub-efi"
+
+# Compatible with:
+# - Raspberry Pi 5
+# - Raspberry Pi 4 with recent firmware
+# - Raspberry Pi CM4 with recent firmware
+[systems.nexigon-os-rpi5]
+layer = "nexigon-os-rpi"
+architecture = "arm64"
+target = "rpi-tryboot"
+
+# Includes a firmware update for the Raspberry Pi 4 family.
+#
+# Compatible with:
+# - Raspberry Pi 4
+# - Raspberry Pi CM4
+[systems.nexigon-os-rpi4]
+layer = "nexigon-os-rpi4"
+architecture = "arm64"
+target = "rpi-tryboot"

@@ -1,0 +1,16 @@
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-layer.schema.json
+
+parent = "nexigon-os-core"
+
+recipes = [
+    # Prepare Debian for booting on Raspberry Pi.
+    "core/rpi-debian-setup",
+    # Use the Raspberry Pi serial number as Nexigon device fingerprint.
+    "nexigon/nexigon-agent-rpi",
+]
+
+[parameters."nexigon/nexigon-agent"]
+version = "e6ab0e7"
+
+[parameters."nexigon/nexigon-agent-rpi"]
+version = "e6ab0e7"

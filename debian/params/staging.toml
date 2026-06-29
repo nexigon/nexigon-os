@@ -1,0 +1,12 @@
+["nexigon/nexigon-agent-config"]
+extra_config = """
+endpoints = ["https://staging.nexigon.dev"]
+device-name = "Nexigon OS staging VM"
+
+[commands]
+enabled = true
+
+[terminal]
+enabled = true
+user = "root"
+"""

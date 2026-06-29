@@ -1,0 +1,7 @@
+/.release-env
+/build/
+/.rugix/
+/.env
+/*.img
+/*.img.xz
+
