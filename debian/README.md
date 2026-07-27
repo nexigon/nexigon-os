@@ -46,7 +46,7 @@ NEXIGON_STAGING_PAIRING_KEY="..." ./scripts/test-staging-vm.sh
 After flashing and booting, create a pairing key in Nexigon Hub and send it to the device:
 
 ```sh
-curl --data "PAIRING-KEY" http://DEVICE_ADDRESS:51337/pair
+curl --data "PAIRING-KEY" http://DEVICE_ADDRESS:6947/pair
 ```
 
 The device hostname is set at boot from stable device identity data and follows `nexigon-<suffix>`.

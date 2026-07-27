@@ -71,13 +71,13 @@ echo "[INFO] checking staged agent configuration"
 
 echo "[INFO] waiting for provisioning endpoint"
 for _ in $(seq 1 60); do
-    if "${ssh_cmd[@]}" 'curl -fsS http://127.0.0.1:51337/' >/dev/null 2>&1; then
+    if "${ssh_cmd[@]}" 'curl -fsS http://127.0.0.1:6947/' >/dev/null 2>&1; then
         break
     fi
     sleep 2
 done
 
-"${ssh_cmd[@]}" 'curl -fsS http://127.0.0.1:51337/'
+"${ssh_cmd[@]}" 'curl -fsS http://127.0.0.1:6947/'
 echo
 
 if [ -z "${NEXIGON_STAGING_PAIRING_KEY:-}" ]; then
@@ -87,7 +87,7 @@ fi
 
 echo "[INFO] redeeming staging pairing key"
 printf '%s' "${NEXIGON_STAGING_PAIRING_KEY}" \
-    | "${ssh_cmd[@]}" 'curl -fsS --data-binary @- http://127.0.0.1:51337/pair'
+    | "${ssh_cmd[@]}" 'curl -fsS --data-binary @- http://127.0.0.1:6947/pair'
 echo
 
 echo "[INFO] checking provisioned credentials"

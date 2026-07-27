@@ -19,5 +19,5 @@ Flash the image onto the device.
 Create a pairing key in the Nexigon UI and pair the device with:
 
 ```sh
-curl --data PAIRING_KEY http://DEVICE_ADDRESS:51337/pair
+curl --data PAIRING_KEY http://DEVICE_ADDRESS:6947/pair
 ```
