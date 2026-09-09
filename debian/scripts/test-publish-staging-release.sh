@@ -16,10 +16,6 @@ set -euo pipefail
 printf '%s\n' "$*" >>"${NEXIGON_CLI_LOG}"
 
 case "$1 $2 $3" in
-    "repositories s3 get")
-        printf '%s\n' \
-            '{"s3Config":{"endpoint":"https://s3.example.test","bucket":"test","accessKeyId":"access"}}'
-        ;;
     "repositories packages list")
         printf '%s\n' '{"packages":[]}'
         ;;

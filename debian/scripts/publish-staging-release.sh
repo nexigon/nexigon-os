@@ -42,24 +42,6 @@ find_artifact() {
     fi
 }
 
-validate_repository_storage() {
-    local storage_info
-
-    storage_info=$(run_cli repositories s3 get "${NEXIGON_REPOSITORY}")
-    if ! jq -e '
-        .s3Config.endpoint | type == "string" and length > 0
-    ' <<<"${storage_info}" >/dev/null \
-        || ! jq -e '
-            .s3Config.bucket | type == "string" and length > 0
-        ' <<<"${storage_info}" >/dev/null \
-        || ! jq -e '
-            .s3Config.accessKeyId | type == "string" and length > 0
-        ' <<<"${storage_info}" >/dev/null; then
-        echo "[ERROR] repository asset storage is not configured" >&2
-        exit 1
-    fi
-}
-
 ensure_package() {
     local package_path="${NEXIGON_REPOSITORY}/${NEXIGON_PACKAGE}"
     local package_info package_count
@@ -247,7 +229,6 @@ for system in "${SYSTEMS[@]}"; do
     validate_system_artifacts "${system}"
 done
 
-validate_repository_storage
 ensure_package
 version_id=$(resolve_or_create_version)
 upload_assets "${version_id}"
