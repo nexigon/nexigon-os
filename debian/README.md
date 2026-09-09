@@ -112,9 +112,8 @@ timeout.
 ## Staging Publication
 
 The GitHub Actions workflow builds all release targets with
-`params/staging.toml`, runs a credential-free x86 VM smoke test, and can publish
-the resulting images, update bundles, hashes, SBOMs, and build information to
-`https://staging.nexigon.dev`.
+`params/staging.toml` and can publish the resulting images, update bundles,
+hashes, SBOMs, and build information to `https://staging.nexigon.dev`.
 
 Configure these repository settings:
 
