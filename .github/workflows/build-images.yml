@@ -59,26 +59,25 @@ jobs:
 
   build:
     name: Build ${{ matrix.system }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
     needs: prepare-release
     strategy:
       fail-fast: false
       matrix:
-        system:
-          - nexigon-os-efi-amd64
-          - nexigon-os-efi-arm64
-          - nexigon-os-rpi5
-          - nexigon-os-rpi4
+        include:
+          - system: nexigon-os-efi-amd64
+            runner: ubuntu-latest
+          - system: nexigon-os-efi-arm64
+            runner: ubuntu-24.04-arm
+          - system: nexigon-os-rpi5
+            runner: ubuntu-24.04-arm
+          - system: nexigon-os-rpi4
+            runner: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           persist-credentials: false
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v4
-        with:
-          platforms: arm64
 
       - name: Build image and update bundle
         working-directory: debian
