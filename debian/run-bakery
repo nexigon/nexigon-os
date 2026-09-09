@@ -51,10 +51,15 @@ if [ -n "${RUGIX_CACHE_VOLUME}" ]; then
 fi
 
 if [ "${1:-}" = "run" ]; then
-    if [ "${DOCKER}" = "podman" ] && [ "$(uname -s)" = "Darwin" ]; then
-        DOCKER_FLAGS="${DOCKER_FLAGS} -p 127.0.0.1:2222:2222 -p 127.0.0.1:6947:6947"
+    if [ "$(uname -s)" = "Darwin" ]; then
+        if [ "${DOCKER}" = "podman" ]; then
+            DOCKER_FLAGS="${DOCKER_FLAGS} -p 127.0.0.1:2222:2222 -p 127.0.0.1:6947:6947"
+        else
+            DOCKER_FLAGS="${DOCKER_FLAGS} -p 127.0.0.1:2222:2222 -p [::1]:2222:2222 -p 127.0.0.1:6947:6947 -p [::1]:6947:6947"
+        fi
     else
-        DOCKER_FLAGS="${DOCKER_FLAGS} -p 127.0.0.1:2222:2222 -p [::1]:2222:2222 -p 127.0.0.1:6947:6947 -p [::1]:6947:6947"
+        # QEMU binds its forwarded ports to the container loopback interface.
+        DOCKER_FLAGS="${DOCKER_FLAGS} --network host"
     fi
 fi
 
