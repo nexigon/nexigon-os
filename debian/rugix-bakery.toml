@@ -1,4 +1,4 @@
-#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-project.schema.json
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.4/schemas/rugix-bakery-project.schema.json
 
 [repositories]
 nexigon = { git = "https://github.com/nexigon/nexigon-rugix.git", branch = "main" }
@@ -18,6 +18,10 @@ target = "generic-grub-efi"
 layer = "nexigon-os-efi-vm"
 architecture = "amd64"
 target = "generic-grub-efi"
+# Leave enough unallocated space for Rugix to create the spare system slot on
+# first boot. Physical targets use the capacity of the device they are flashed
+# to, while the QEMU disk is exactly the configured image size.
+image = { size = "16G" }
 
 # Compatible with:
 # - Raspberry Pi 5

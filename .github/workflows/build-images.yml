@@ -29,6 +29,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Generate release metadata
@@ -79,7 +80,7 @@ jobs:
         with:
           platforms: arm64
 
-      - name: Build image
+      - name: Build image and update bundle
         working-directory: debian
         env:
           SYSTEM: ${{ matrix.system }}
@@ -87,8 +88,10 @@ jobs:
         run: |
           set -euo pipefail
 
-          echo "[INFO] building image for '${SYSTEM}' (version: ${VERSION})"
-          ./run-bakery bake image "${SYSTEM}" --release-version "${VERSION}"
+          echo "[INFO] building image and update bundle for '${SYSTEM}' (version: ${VERSION})"
+          ./run-bakery bake bundle "${SYSTEM}" \
+              --release-version "${VERSION}" \
+              --param-file params/staging.toml
 
           IMG_PATH="build/${SYSTEM}/system.img"
           if [ -e "${IMG_PATH}" ]; then
@@ -120,6 +123,8 @@ jobs:
           }
 
           collect_artifact "build/${SYSTEM}/system.img.xz" "../dist/${SYSTEM}/${SYSTEM}.img.xz"
+          collect_artifact "build/${SYSTEM}/system.rugixb" "../dist/${SYSTEM}/${SYSTEM}.rugixb"
+          collect_artifact "build/${SYSTEM}/system.rugixb-hash" "../dist/${SYSTEM}/${SYSTEM}.rugixb-hash"
 
           if [ -e "build/${SYSTEM}/sbom.cdx.json" ]; then
               collect_artifact "build/${SYSTEM}/sbom.cdx.json" "../dist/${SYSTEM}/${SYSTEM}.cdx.json"
@@ -131,10 +136,20 @@ jobs:
               collect_artifact "build/${SYSTEM}/system-build-info.json" "../dist/${SYSTEM}/${SYSTEM}.build-info.json"
           fi
 
-          if ! find "../dist/${SYSTEM}" -type f -print -quit | grep -q .; then
-              echo "[ERROR] no artifacts found for '${SYSTEM}'"
-              exit 1
-          fi
+          required_suffixes=(
+              img.xz
+              rugixb
+              rugixb-hash
+              spdx.json
+              cdx.json
+              build-info.json
+          )
+          for suffix in "${required_suffixes[@]}"; do
+              if [ ! -f "../dist/${SYSTEM}/${SYSTEM}.${suffix}" ]; then
+                  echo "[ERROR] required '${SYSTEM}.${suffix}' artifact is missing"
+                  exit 1
+              fi
+          done
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
@@ -144,12 +159,109 @@ jobs:
           if-no-files-found: error
           compression-level: 0
 
+  test-staging-vm:
+    name: Test Staging VM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Run VM smoke test
+        working-directory: debian
+        run: ./scripts/test-staging-vm.sh
+
+  publish-staging:
+    name: Publish to Nexigon Staging
+    runs-on: ubuntu-latest
+    needs:
+      - prepare-release
+      - build
+      - test-staging-vm
+    if: github.event_name != 'pull_request' && vars.NEXIGON_STAGING_REPOSITORY != ''
+    concurrency:
+      group: nexigon-os-staging-publish
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+
+      - name: Install Nexigon CLI
+        run: curl -fsSL https://install.nexigon.dev/download-cli.sh | sh
+
+      - name: Validate staging publisher
+        working-directory: debian
+        run: ./scripts/test-publish-staging-release.sh
+
+      - name: Publish staging assets and tags
+        working-directory: debian
+        env:
+          ARTIFACT_DIR: ../dist
+          BUILD_TAG: ${{ needs.prepare-release.outputs.version }}
+          NEXIGON_CLI: ../nexigon-cli
+          NEXIGON_PACKAGE: ${{ vars.NEXIGON_STAGING_PACKAGE }}
+          NEXIGON_REPOSITORY: ${{ vars.NEXIGON_STAGING_REPOSITORY }}
+          NEXIGON_STAGING_TOKEN: ${{ secrets.NEXIGON_STAGING_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${NEXIGON_STAGING_TOKEN}" ]; then
+              echo "[ERROR] NEXIGON_STAGING_TOKEN is not configured"
+              exit 1
+          fi
+
+          floating_tag=""
+          publish_staging="false"
+          if [ "${GITHUB_REF_TYPE}" = "branch" ]; then
+              remote_ref="refs/remotes/origin/${GITHUB_REF_NAME}"
+              if ! remote_commit=$(git rev-parse --verify "${remote_ref}" 2>/dev/null) \
+                  || [ "${remote_commit}" != "${GITHUB_SHA}" ]; then
+                  echo "[INFO] a newer '${GITHUB_REF_NAME}' build exists; not moving channel tags"
+              else
+                  safe_branch=$(printf '%s' "${GITHUB_REF_NAME}" \
+                      | sed 's/[^A-Za-z0-9._-]/-/g')
+                  floating_tag="latest-build-${safe_branch}"
+                  if [ "${GITHUB_REF_NAME}" = "main" ]; then
+                      publish_staging="true"
+                  fi
+              fi
+          fi
+
+          config="${RUNNER_TEMP}/nexigon-cli.toml"
+          cleanup() {
+              if [ -f "${config}" ]; then
+                  unlink "${config}"
+              fi
+          }
+          trap cleanup EXIT
+
+          umask 077
+          printf 'hub-url = "https://staging.nexigon.dev"\ntoken = "%s"\n' \
+              "${NEXIGON_STAGING_TOKEN}" >"${config}"
+
+          export NEXIGON_CLI_CONFIG="${config}"
+          export FLOATING_TAG="${floating_tag}"
+          export PUBLISH_STAGING="${publish_staging}"
+          export SOURCE_COMMIT="${GITHUB_SHA}"
+
+          ./scripts/publish-staging-release.sh
+
   publish-release:
     name: Publish GitHub Release
     runs-on: ubuntu-latest
     needs:
       - prepare-release
       - build
+      - test-staging-vm
     if: github.ref_type == 'tag'
     permissions:
       actions: read

@@ -1,9 +1,23 @@
-#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-layer.schema.json
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.4/schemas/rugix-bakery-layer.schema.json
 
 parent = "nexigon-os-core"
 
 recipes = [
     # Setup Debian for booting via GRUB on EFI systems.
     "core/debian-grub-setup",
+    # Docker-backed Rugix Apps runtime.
+    "rugix-apps",
+    # Rugix Apps lifecycle commands.
+    "nexigon/nexigon-rugix-apps",
+    # Hash-verified Rugix system updates through Nexigon.
+    "nexigon/nexigon-rugix-ota",
 ]
 
+[parameters."core/rugix-ctrl"]
+version = "v1.3.0"
+
+[parameters."nexigon/nexigon-rugix-apps"]
+use_bundle_hash = "true"
+
+[parameters."nexigon/nexigon-rugix-ota"]
+use_bundle_hash = "true"

@@ -1,0 +1,2 @@
+description = "install the Docker-backed Rugix Apps runtime"
+dependencies = ["core/rugix-ctrl"]

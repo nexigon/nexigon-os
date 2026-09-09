@@ -16,7 +16,6 @@ else
 fi
 
 for system in "${systems[@]}"; do
-    echo "[INFO] building image for '${system}'"
-    ./run-bakery bake image "${system}"
+    echo "[INFO] building image and update bundle for '${system}'"
+    ./run-bakery bake bundle "${system}"
 done
-

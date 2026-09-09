@@ -1,4 +1,4 @@
-#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.3/schemas/rugix-bakery-layer.schema.json
+#:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.4/schemas/rugix-bakery-layer.schema.json
 
 parent = "nexigon-os-core"
 
@@ -7,10 +7,25 @@ recipes = [
     "core/rpi-debian-setup",
     # Use the Raspberry Pi serial number as Nexigon device fingerprint.
     "nexigon/nexigon-agent-rpi",
+    # Docker-backed Rugix Apps runtime.
+    "rugix-apps",
+    # Rugix Apps lifecycle commands.
+    "nexigon/nexigon-rugix-apps",
+    # Hash-verified Rugix system updates through Nexigon.
+    "nexigon/nexigon-rugix-ota",
 ]
 
+[parameters."core/rugix-ctrl"]
+version = "v1.3.0"
+
+[parameters."nexigon/nexigon-rugix-apps"]
+use_bundle_hash = "true"
+
+[parameters."nexigon/nexigon-rugix-ota"]
+use_bundle_hash = "true"
+
 [parameters."nexigon/nexigon-agent"]
-version = "e6ab0e7"
+version = "git-6c2874a"
 
 [parameters."nexigon/nexigon-agent-rpi"]
-version = "e6ab0e7"
+version = "git-6c2874a"
