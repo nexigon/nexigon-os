@@ -25,7 +25,7 @@ use_bundle_hash = "true"
 use_bundle_hash = "true"
 
 [parameters."nexigon/nexigon-agent"]
-version = "git-6c2874a"
+version = "v0.6.0"
 
 [parameters."nexigon/nexigon-agent-rpi"]
-version = "git-6c2874a"
+version = "v0.6.0"

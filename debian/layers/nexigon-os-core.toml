@@ -27,7 +27,7 @@ recipes = [
 hostname = "nexigon-os"
 
 [parameters."nexigon/nexigon-agent"]
-version = "git-6c2874a"
+version = "v0.6.0"
 
 [parameters."nexigon/nexigon-agent-config"]
 provisioning = "true"

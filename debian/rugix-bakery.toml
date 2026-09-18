@@ -1,7 +1,7 @@
 #:schema https://raw.githubusercontent.com/rugix/rugix-bakery/refs/tags/v0.9.4/schemas/rugix-bakery-project.schema.json
 
 [repositories]
-nexigon = { git = "https://github.com/nexigon/nexigon-rugix.git", branch = "main" }
+nexigon = { git = "https://github.com/nexigon/nexigon-rugix.git", branch = "v0.3" }
 rugix-extra = { git = "https://github.com/rugix/rugix-extra.git", branch = "v0.8" }
 
 [systems.nexigon-os-efi-amd64]
