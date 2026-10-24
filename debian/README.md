@@ -102,6 +102,8 @@ The OTA timer remains idle until the device property
 { "path": "REPOSITORY/nexigon-os/staging" }
 ```
 
+Replace `REPOSITORY` with the path name or ID of the repository.
+
 The selected package version must have `metadata.imageVersion` and contain one
 bundle named `<system>.rugixb` for each target. Bundle assets can carry
 `metadata.rugix.bundleHash`; when absent, Rugix Ctrl verifies the bundle's
