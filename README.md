@@ -42,6 +42,8 @@ Rugix App bundles. OS updates are selected through the
 { "path": "REPOSITORY/nexigon-os/staging" }
 ```
 
+Replace `REPOSITORY` with the path name or ID of the repository.
+
 ## Prototype Security Model
 
 The staging publisher attaches Rugix bundle hashes to application and OS asset
