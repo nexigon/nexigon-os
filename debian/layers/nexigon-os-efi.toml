@@ -14,7 +14,7 @@ recipes = [
 ]
 
 [parameters."core/rugix-ctrl"]
-version = "v1.3.1"
+version = "v1.4.0-dev.1"
 
 [parameters."nexigon/nexigon-rugix-apps"]
 use_bundle_hash = "true"

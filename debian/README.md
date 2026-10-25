@@ -87,11 +87,24 @@ The device hostname is set at boot from stable device identity data and follows
 
 ## Applications
 
-Nexigon OS uses Docker as the runtime for Rugix Apps. The Nexigon Agent exposes
-commands for listing, deploying, starting, stopping, rolling back, and removing
-apps. When a `.rugixb` app asset includes a Rugix bundle hash at
-`metadata.rugix.bundleHash`, deployment passes it to Rugix Ctrl. Without this
-metadata, Rugix Ctrl performs its normal signature verification.
+Nexigon OS uses Docker as the runtime for Rugix Apps. Nexigon Agent manages
+the apps listed in the device property `dev.nexigon.apps.config`, which the
+device's **Applications** tab in Nexigon Hub edits, and reports their status in
+`dev.nexigon.apps.status`. For example, the following configuration runs the
+latest release of an app:
+
+```json
+{ "apps": { "python-web-server": { "path": "REPOSITORY/python-web-server/latest" } } }
+```
+
+The agent installs the bundle named `<app>-<arch>.rugixb` for the device's
+architecture, such as `x86_64` or `aarch64`. When the bundle asset includes a
+Rugix bundle hash at `metadata.rugix.bundleHash`, the agent passes it to Rugix
+Ctrl. Without this metadata, Rugix Ctrl performs its normal signature
+verification.
+
+For apps that the configuration does not list, the agent also exposes commands
+for listing, deploying, starting, stopping, rolling back, and removing them.
 
 ## OS Updates
 
