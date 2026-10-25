@@ -8,4 +8,12 @@ enabled = true
 [terminal]
 enabled = true
 user = "root"
+
+[integrations.rugix.system-updates]
+enabled = true
+use-bundle-hash = true
+
+[integrations.rugix.apps]
+enabled = true
+use-bundle-hash = true
 """

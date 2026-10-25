@@ -35,8 +35,9 @@ curl --data PAIRING_KEY http://DEVICE_ADDRESS:6947/pair
 ```
 
 After pairing, applications can be deployed from Nexigon package versions as
-Rugix App bundles. OS updates are selected through the
-`dev.nexigon.ota.config` device property, for example:
+Rugix App bundles. Nexigon Agent manages OS updates through its native Rugix
+integration and reports progress in `dev.nexigon.ota.status`. Select updates
+through the `dev.nexigon.ota.config` device property, for example:
 
 ```json
 { "path": "REPOSITORY/nexigon-os/staging" }

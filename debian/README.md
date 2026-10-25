@@ -51,9 +51,10 @@ Run a local EFI VM against `https://staging.nexigon.dev`:
 ```
 
 The smoke test checks the staged Agent configuration, Docker and Compose, Rugix
-Apps services, Nexigon app commands, OTA hash enforcement, and the local pairing
-endpoint. To test full pairing, use a host-side Nexigon CLI configuration with
-an organization API token and identify the destination project:
+Apps services, Nexigon app commands, native Rugix update configuration, the
+rollback watchdog, and the local pairing endpoint. To test full pairing, use a
+host-side Nexigon CLI configuration with an organization API token and identify
+the destination project:
 
 ```sh
 NEXIGON_CLI_CONFIG="/private/path/cli.toml" \
@@ -63,7 +64,8 @@ NEXIGON_STAGING_PROJECT_ID="project-id" \
 
 The script uses the organization token only through the host-side CLI. It
 issues a short-lived one-time pairing key, sends only that key to the VM, and
-then verifies through Nexigon that the paired device is connected. An unused
+then verifies that the native Rugix integration publishes update status and,
+through Nexigon, that the paired device is connected. An unused
 key is revoked automatically if the test exits early, and a device created by
 the test is deleted during cleanup. Set `NEXIGON_STAGING_KEEP_DEVICE=true` to
 retain it for inspection. For compatibility, a manually issued key can instead
@@ -108,8 +110,15 @@ for listing, deploying, starting, stopping, rolling back, and removing them.
 
 ## OS Updates
 
-The OTA timer remains idle until the device property
-`dev.nexigon.ota.config` supplies a Nexigon version path:
+Nexigon Agent manages system updates through its native Rugix integration,
+reports progress in `dev.nexigon.ota.status`, and accepts immediate checks through
+the `nexigon.ota.check` command. It checks for updates every four hours, with up
+to five minutes of random delay, and honors maintenance windows configured in
+`dev.nexigon.ota.config`. The legacy `nexigon-rugix-ota` service and timer are
+not installed.
+
+No update is installed until the device property `dev.nexigon.ota.config` supplies
+a Nexigon version path:
 
 ```json
 { "path": "REPOSITORY/nexigon-os/staging" }
@@ -118,9 +127,9 @@ The OTA timer remains idle until the device property
 The selected package version must have `metadata.imageVersion` and contain one
 bundle named `<system>.rugixb` for each target. Bundle assets can carry
 `metadata.rugix.bundleHash`; when absent, Rugix Ctrl verifies the bundle's
-signature instead. Successful boots are committed automatically; an uncommitted
-update reboots back to the previous system after the watchdog's 30-minute
-timeout.
+signature instead. Nexigon Agent commits successful boots after connecting to
+Nexigon Hub; an uncommitted update reboots back to the previous system after
+the watchdog's 30-minute timeout.
 
 ## Staging Publication
 
