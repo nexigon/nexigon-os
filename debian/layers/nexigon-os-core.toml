@@ -27,7 +27,7 @@ recipes = [
 hostname = "nexigon-os"
 
 [parameters."nexigon/nexigon-agent"]
-version = "v0.6.1"
+version = "git-33c1d99"
 
 [parameters."nexigon/nexigon-agent-config"]
 provisioning = "true"
@@ -38,4 +38,10 @@ enabled = true
 [terminal]
 enabled = true
 user = "root"
+
+# Manage apps through `dev.nexigon.apps.config` with the Rugix Apps runtime of
+# the EFI and Raspberry Pi layers.
+[integrations.rugix.apps]
+enabled = true
+use-bundle-hash = true
 """
