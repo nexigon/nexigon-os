@@ -11,17 +11,14 @@ recipes = [
     "rugix-apps",
     # Rugix Apps lifecycle commands.
     "nexigon/nexigon-rugix-apps",
-    # Hash-verified Rugix system updates through Nexigon.
-    "nexigon/nexigon-rugix-ota",
+    # Roll back uncommitted Rugix system updates after the boot timeout.
+    "nexigon/nexigon-rugix-watchdog",
 ]
 
 [parameters."core/rugix-ctrl"]
 version = "v1.4.0-dev.1"
 
 [parameters."nexigon/nexigon-rugix-apps"]
-use_bundle_hash = "true"
-
-[parameters."nexigon/nexigon-rugix-ota"]
 use_bundle_hash = "true"
 
 [parameters."nexigon/nexigon-agent"]

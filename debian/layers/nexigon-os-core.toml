@@ -39,6 +39,11 @@ enabled = true
 enabled = true
 user = "root"
 
+# Manage system updates through `dev.nexigon.ota.config` with Rugix Ctrl.
+[integrations.rugix.system-updates]
+enabled = true
+use-bundle-hash = true
+
 # Manage apps through `dev.nexigon.apps.config` with the Rugix Apps runtime of
 # the EFI and Raspberry Pi layers.
 [integrations.rugix.apps]
