@@ -5,6 +5,7 @@ parent = "nexigon-os-core"
 recipes = [
     # Prepare Debian for booting on Raspberry Pi.
     "core/rpi-debian-setup",
+    "rpi-fw-crypto",
     # Use the Raspberry Pi serial number as Nexigon device fingerprint.
     "nexigon/nexigon-agent-rpi",
     # Docker-backed Rugix Apps runtime.
