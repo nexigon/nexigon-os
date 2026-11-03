@@ -212,18 +212,20 @@ if [ "${pairing_key_issued:-false}" = true ]; then
     fi
 fi
 
-echo "[INFO] waiting for native Rugix system update status"
+echo "[INFO] waiting for native Rugix system update and app status"
 for _ in $(seq 1 60); do
     if "${ssh_cmd[@]}" 'nexigon-agent device properties get dev.nexigon.ota.status' \
-        | jq -e '.result == "Found" and .value.updater.name == "rugix"' >/dev/null; then
-        native_update_status_ready=true
+        | jq -e '.result == "Found" and .value.updater.name == "rugix"' >/dev/null \
+        && "${ssh_cmd[@]}" 'nexigon-agent device properties get dev.nexigon.rugix-apps.status' \
+        | jq -e '.result == "Found" and (.value.apps | type == "object") and (.value.rugixCtrlVersion | type == "string")' >/dev/null; then
+        native_status_ready=true
         break
     fi
     sleep 2
 done
 
-if [ "${native_update_status_ready:-false}" != true ]; then
-    echo "[ERROR] native Rugix integration did not publish update status" >&2
+if [ "${native_status_ready:-false}" != true ]; then
+    echo "[ERROR] native Rugix integrations did not publish system update and app status" >&2
     "${ssh_cmd[@]}" 'journalctl -u nexigon-agent --no-pager -n 120' >&2 || true
     exit 1
 fi

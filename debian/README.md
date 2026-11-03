@@ -3,8 +3,8 @@
 Nexigon OS is a ready-to-flash Debian image built with Rugix Bakery. Devices
 boot unpaired, expose the local provisioning endpoint, and can be paired with a
 Nexigon project using a one-time pairing key. Every release target contains the
-Nexigon Agent, Docker and Docker Compose, the Rugix Apps runtime, and Rugix A/B
-system updates with Rugix Ctrl 1.4.0.
+Nexigon Agent v0.6.0-7-g1a69365, Docker and Docker Compose, the Rugix Apps
+runtime, and Rugix A/B system updates with Rugix Ctrl 1.4.0.
 
 ## Systems
 
@@ -64,8 +64,8 @@ NEXIGON_STAGING_PROJECT_ID="project-id" \
 
 The script uses the organization token only through the host-side CLI. It
 issues a short-lived one-time pairing key, sends only that key to the VM, and
-then verifies that the native Rugix integration publishes update status and,
-through Nexigon, that the paired device is connected. An unused
+then verifies that the native Rugix integrations publish system update and app
+status and, through Nexigon, that the paired device is connected. An unused
 key is revoked automatically if the test exits early, and a device created by
 the test is deleted during cleanup. Set `NEXIGON_STAGING_KEEP_DEVICE=true` to
 retain it for inspection. For compatibility, a manually issued key can instead
@@ -90,14 +90,20 @@ The device hostname is set at boot from stable device identity data and follows
 ## Applications
 
 Nexigon OS uses Docker as the runtime for Rugix Apps. Nexigon Agent manages
-the apps listed in the device property `dev.nexigon.apps.config`, which the
+the apps listed in the device property `dev.nexigon.rugix-apps.config`, which the
 device's **Applications** tab in Nexigon Hub edits, and reports their status in
-`dev.nexigon.apps.status`. For example, the following configuration runs the
+`dev.nexigon.rugix-apps.status`. For example, the following configuration runs the
 latest release of an app:
 
 ```json
 { "apps": { "python-web-server": { "path": "REPOSITORY/python-web-server/latest" } } }
 ```
+
+When upgrading an existing device, copy `dev.nexigon.apps.config` to
+`dev.nexigon.rugix-apps.config` in Nexigon Hub before installing the new image.
+The Agent no longer reads the old property. Update callers of
+`nexigon.apps.check` to use `nexigon.rugix-apps.check`. The Agent publishes
+status under the new name automatically.
 
 The agent installs the bundle named `<app>-<arch>.rugixb` for the device's
 architecture, such as `x86_64` or `aarch64`. When the bundle asset includes a

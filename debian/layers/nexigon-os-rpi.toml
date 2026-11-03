@@ -22,7 +22,7 @@ version = "v1.4.0"
 use_bundle_hash = "true"
 
 [parameters."nexigon/nexigon-agent"]
-version = "git-33c1d99"
+version = "v0.6.0-7-g1a69365"
 
 [parameters."nexigon/nexigon-agent-rpi"]
-version = "git-33c1d99"
+version = "v0.6.0-7-g1a69365"
