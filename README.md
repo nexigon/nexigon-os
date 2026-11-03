@@ -43,6 +43,8 @@ through the `dev.nexigon.ota.config` device property, for example:
 { "path": "REPOSITORY/nexigon-os/staging" }
 ```
 
+Replace `REPOSITORY` with the path name or ID of the repository.
+
 ## Prototype Security Model
 
 The staging publisher attaches Rugix bundle hashes to application and OS asset
