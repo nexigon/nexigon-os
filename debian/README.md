@@ -16,6 +16,9 @@ runtime, and Rugix A/B system updates with Rugix Ctrl 1.4.0.
 - `nexigon-os-rpi4`: Raspberry Pi 4 and CM4 with a bundled Pi 4 firmware
   update.
 
+Raspberry Pi images include `rpi-fw-crypto`, provided by the `rpifwcrypto`
+package, to access the Raspberry Pi firmware cryptography service.
+
 ## Build
 
 Build all images and full-system update bundles:

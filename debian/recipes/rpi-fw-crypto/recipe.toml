@@ -1,0 +1,2 @@
+description = "Install the Raspberry Pi firmware cryptography tool."
+dependencies = ["core/rpi-debian-setup"]
