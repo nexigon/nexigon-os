@@ -59,3 +59,12 @@ hash.
 
 See [`debian/README.md`](debian/README.md) for build, staging publication, and
 VM validation instructions.
+
+## Building
+
+Install [mise](https://mise.jdx.dev/) and a supported container runtime, then
+run `mise run build <system>` from the repository root. Omit the system to
+build all default images. No Nix installation is required.
+
+Use `mise run test:publisher` to test publication behavior without publishing.
+See the [Debian build guide](debian/README.md) for release and VM prerequisites.

@@ -20,6 +20,16 @@ permissions:
   contents: read
 
 jobs:
+  test-publisher:
+    name: Test Publisher
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: jdx/mise-action@8418fedb1110381a0d3ba51a7a415d7c1b884550 # v5.2.2
+        with:
+          install: false
+      - run: mise run test:publisher
+
   prepare-release:
     name: Prepare Release Metadata
     runs-on: ubuntu-latest
@@ -79,76 +89,21 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up mise
+        uses: jdx/mise-action@8418fedb1110381a0d3ba51a7a415d7c1b884550 # v5.2.2
+        with:
+          install: false
+
       - name: Build image and update bundle
-        working-directory: debian
         env:
           SYSTEM: ${{ matrix.system }}
           VERSION: ${{ needs.prepare-release.outputs.version }}
-        run: |
-          set -euo pipefail
-
-          echo "[INFO] building image and update bundle for '${SYSTEM}' (version: ${VERSION})"
-          ./run-bakery bake bundle "${SYSTEM}" \
-              --release-version "${VERSION}" \
-              --param-file params/staging.toml
-
-          IMG_PATH="build/${SYSTEM}/system.img"
-          if [ -e "${IMG_PATH}" ]; then
-              echo "[INFO] compressing '${SYSTEM}' image"
-              xz -T0 -f "${IMG_PATH}"
-          else
-              echo "[ERROR] expected image not found at '${IMG_PATH}'"
-              exit 1
-          fi
-
-          sudo chown -R "$(id -u):$(id -g)" build
+        run: mise run build:release
 
       - name: Collect artifacts
-        working-directory: debian
         env:
           SYSTEM: ${{ matrix.system }}
-        run: |
-          set -euo pipefail
-
-          mkdir -p "../dist/${SYSTEM}"
-
-          collect_artifact() {
-              src="$1"
-              dest="$2"
-
-              if [ -e "${src}" ]; then
-                  ln "${src}" "${dest}" 2>/dev/null || cp "${src}" "${dest}"
-              fi
-          }
-
-          collect_artifact "build/${SYSTEM}/system.img.xz" "../dist/${SYSTEM}/${SYSTEM}.img.xz"
-          collect_artifact "build/${SYSTEM}/system.rugixb" "../dist/${SYSTEM}/${SYSTEM}.rugixb"
-          collect_artifact "build/${SYSTEM}/system.rugixb-hash" "../dist/${SYSTEM}/${SYSTEM}.rugixb-hash"
-
-          if [ -e "build/${SYSTEM}/sbom.cdx.json" ]; then
-              collect_artifact "build/${SYSTEM}/sbom.cdx.json" "../dist/${SYSTEM}/${SYSTEM}.cdx.json"
-          fi
-          if [ -e "build/${SYSTEM}/sbom.spdx.json" ]; then
-              collect_artifact "build/${SYSTEM}/sbom.spdx.json" "../dist/${SYSTEM}/${SYSTEM}.spdx.json"
-          fi
-          if [ -e "build/${SYSTEM}/system-build-info.json" ]; then
-              collect_artifact "build/${SYSTEM}/system-build-info.json" "../dist/${SYSTEM}/${SYSTEM}.build-info.json"
-          fi
-
-          required_suffixes=(
-              img.xz
-              rugixb
-              rugixb-hash
-              spdx.json
-              cdx.json
-              build-info.json
-          )
-          for suffix in "${required_suffixes[@]}"; do
-              if [ ! -f "../dist/${SYSTEM}/${SYSTEM}.${suffix}" ]; then
-                  echo "[ERROR] required '${SYSTEM}.${suffix}' artifact is missing"
-                  exit 1
-              fi
-          done
+        run: mise run release:collect
 
       - name: Upload artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

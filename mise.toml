@@ -1,0 +1,35 @@
+[tasks."build"]
+description = "Build selected system images and bundles (all defaults if omitted)."
+dir = "{{config_root}}/debian"
+run = "bash scripts/build-images.sh \"$@\""
+
+[tasks."bakery"]
+description = "Run a Rugix Bakery command."
+dir = "{{config_root}}/debian"
+run = "./run-bakery \"$@\""
+
+[tasks."test:publisher"]
+description = "Check the staging publication workflow."
+dir = "{{config_root}}/debian"
+run = "bash scripts/test-publish-staging-release.sh"
+
+[tasks."test:vm"]
+description = "Run the staging VM integration test."
+dir = "{{config_root}}/debian"
+run = "bash scripts/test-staging-vm.sh"
+
+[tasks."publish"]
+env = { ARTIFACT_DIR = "{{ get_env(name='ARTIFACT_DIR', default='../dist') }}" }
+description = "Publish staging release artifacts."
+dir = "{{config_root}}/debian"
+run = "bash scripts/publish-staging-release.sh \"$@\""
+
+[tasks."build:release"]
+description = "Build and compress a release image; set SYSTEM and VERSION."
+dir = "{{config_root}}/debian"
+run = "bash scripts/build-release.sh"
+
+[tasks."release:collect"]
+description = "Collect release artifacts; set SYSTEM."
+dir = "{{config_root}}/debian"
+run = "bash scripts/collect-release.sh"

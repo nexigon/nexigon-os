@@ -21,36 +21,43 @@ package, to access the Raspberry Pi firmware cryptography service.
 
 ## Build
 
-Build all images and full-system update bundles:
+From the repository root, use mise with a supported container runtime.
+Nix is not required. Build all images and full-system update bundles:
 
 ```sh
-./scripts/build-images.sh
+mise run build
 ```
 
 Build one target:
 
 ```sh
-./scripts/build-images.sh nexigon-os-efi-amd64
+mise run build nexigon-os-efi-amd64
 ```
 
-Artifacts are written to `build/<system>/`. The important outputs are
+Artifacts are written to `debian/build/<system>/`. The important outputs are
 `system.img`, `system.rugixb`, `system.rugixb-hash`, the SPDX and CycloneDX
 SBOMs, and `system-build-info.json`.
 
-To build an artifact with staging Agent configuration and an explicit version:
+To build and compress an image with staging Agent configuration and an
+explicit version, then collect its release artifacts under `dist/<system>/`:
 
 ```sh
-./run-bakery bake bundle nexigon-os-efi-amd64 \
-    --release-version build-example \
-    --param-file params/staging.toml
+SYSTEM=nexigon-os-efi-amd64 VERSION=build-example mise run build:release
+SYSTEM=nexigon-os-efi-amd64 mise run release:collect
 ```
+
+Release builds require host `xz` for compression and `sudo` to restore
+ownership of the build outputs.
+For other Bakery commands, run `mise run bakery -- <args>`.
 
 ## Staging VM Test
 
-Run a local EFI VM against `https://staging.nexigon.dev`:
+VM tests require host OpenSSH and `jq`; full pairing also requires Nexigon
+CLI and its configuration. Run a local EFI VM against
+`https://staging.nexigon.dev`:
 
 ```sh
-./scripts/test-staging-vm.sh
+mise run test:vm
 ```
 
 The smoke test checks the staged Agent configuration, Docker and Compose, Rugix
@@ -62,7 +69,7 @@ the destination project:
 ```sh
 NEXIGON_CLI_CONFIG="/private/path/cli.toml" \
 NEXIGON_STAGING_PROJECT_ID="project-id" \
-    ./scripts/test-staging-vm.sh
+    mise run test:vm
 ```
 
 The script uses the organization token only through the host-side CLI. It
@@ -75,7 +82,7 @@ retain it for inspection. For compatibility, a manually issued key can instead
 be provided as:
 
 ```sh
-NEXIGON_STAGING_PAIRING_KEY="..." ./scripts/test-staging-vm.sh
+NEXIGON_STAGING_PAIRING_KEY="..." mise run test:vm
 ```
 
 ## Pairing
