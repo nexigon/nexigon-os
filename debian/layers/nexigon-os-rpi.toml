@@ -17,13 +17,13 @@ recipes = [
 ]
 
 [parameters."core/rugix-ctrl"]
-version = "v1.4.0"
+version = "v1.4.1"
 
 [parameters."nexigon/nexigon-rugix-apps"]
 use_bundle_hash = "true"
 
 [parameters."nexigon/nexigon-agent"]
-version = "v0.6.0-7-g1a69365"
+version = "v0.6.0-20-ge687250"
 
 [parameters."nexigon/nexigon-agent-rpi"]
-version = "v0.6.0-7-g1a69365"
+version = "v0.6.0-20-ge687250"
