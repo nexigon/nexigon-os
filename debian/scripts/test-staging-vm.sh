@@ -106,9 +106,10 @@ test "${runtime_components_result}" = success
 "${ssh_cmd[@]}" 'systemctl is-active --quiet rugix-apps-recover.service'
 
 echo "[INFO] checking Nexigon Rugix commands and OTA configuration"
-"${ssh_cmd[@]}" 'test -f /etc/nexigon/agent/commands/nexigon.rugix-apps.deploy.toml'
-"${ssh_cmd[@]}" 'test -f /etc/nexigon/agent/commands/nexigon.rugix-apps.list.toml'
-"${ssh_cmd[@]}" 'grep -q "NEXIGON_RUGIX_APPS_USE_BUNDLE_HASH:-true" /usr/libexec/nexigon/nexigon-rugix-apps-deploy'
+"${ssh_cmd[@]}" 'sed -n "/^\[integrations.rugix.apps\]/,/^$/p" /etc/nexigon/agent.toml | grep -q "enabled = true"'
+"${ssh_cmd[@]}" 'sed -n "/^\[integrations.rugix.apps\]/,/^$/p" /etc/nexigon/agent.toml | grep -q "use-bundle-hash = true"'
+"${ssh_cmd[@]}" 'test ! -e /usr/libexec/nexigon/nexigon-rugix-apps-deploy'
+"${ssh_cmd[@]}" 'test ! -e /etc/nexigon/agent/commands/nexigon.rugix-apps.deploy.toml'
 "${ssh_cmd[@]}" 'sed -n "/^\[integrations.rugix.system-updates\]/,/^$/p" /etc/nexigon/agent.toml | grep -q "enabled = true"'
 "${ssh_cmd[@]}" 'sed -n "/^\[integrations.rugix.system-updates\]/,/^$/p" /etc/nexigon/agent.toml | grep -q "use-bundle-hash = true"'
 "${ssh_cmd[@]}" 'test ! -e /usr/bin/nexigon-rugix-ota'
