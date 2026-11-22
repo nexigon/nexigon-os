@@ -3,7 +3,7 @@
 Nexigon OS is a ready-to-flash Debian image built with Rugix Bakery. Devices
 boot unpaired, expose the local provisioning endpoint, and can be paired with a
 Nexigon project using a one-time pairing key. Every release target contains the
-Nexigon Agent v0.6.0-20-ge687250, Docker and Docker Compose, the Rugix Apps
+Nexigon Agent 0.7.0, Docker and Docker Compose, the Rugix Apps
 runtime, and Rugix A/B system updates with Rugix Ctrl 1.4.1.
 
 ## Systems
@@ -122,7 +122,7 @@ Ctrl. Without this metadata, Rugix Ctrl performs its normal signature
 verification.
 
 For apps that the configuration does not list, the agent also exposes commands
-for listing, deploying, starting, stopping, rolling back, and removing them.
+for starting, stopping, rolling back, and removing them.
 
 ## OS Updates
 

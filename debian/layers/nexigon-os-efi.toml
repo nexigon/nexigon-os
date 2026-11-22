@@ -7,14 +7,9 @@ recipes = [
     "core/debian-grub-setup",
     # Docker-backed Rugix Apps runtime.
     "rugix-apps",
-    # Rugix Apps lifecycle commands.
-    "nexigon/nexigon-rugix-apps",
     # Roll back uncommitted Rugix system updates after the boot timeout.
     "nexigon/nexigon-rugix-watchdog",
 ]
 
 [parameters."core/rugix-ctrl"]
 version = "v1.4.1"
-
-[parameters."nexigon/nexigon-rugix-apps"]
-use_bundle_hash = "true"
